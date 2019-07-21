@@ -1,0 +1,33 @@
+---
+- hosts: web #group name from the inventory
+  gather_facts: false #hides lines
+
+  vars:
+    pack_name: httpd
+
+  tasks:
+    - name: execute the date command
+      command: date
+      register: output
+
+    - debug: var=output
+
+
+    - name: execute the cat command
+      command: cat /etc/hosts
+      register: output1
+
+    - debug: var=output1
+
+
+    - name: execute the uptime command
+      command: uptime
+      register: output2
+
+    - debug: var=output2
+
+    - name: Add date, file and uptime into file
+      lineinfile:
+         path: /opt/log/output.txt
+         line: "{{ output.stdout }} {{ output1.stdout }} {{ output2.stdout }}"
+         create: yes

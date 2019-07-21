@@ -1,0 +1,36 @@
+---
+- name: Execute a script to install mysql on remote machine
+  hosts: web
+  vars_files:
+     - var_path.yml
+
+  tasks:
+     - name: Configure YUM Repository
+       command: "rpm -Uvh {{ rpm_path }}"
+       become: yes
+       register: output
+       ignore_errors: yes
+
+     - name: Disable all repositories in mysql repo file.
+       command: "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/mysql-community.repo"
+       when: output.rc == 0 or output.rc == 1
+       become: yes
+       register: output1
+       ignore_errors: yes
+
+     - name: Install My SQL Community Server
+       command: "yum --enablerepo=mysql57-community install mysql-community-server"
+#       yum:
+#         name: mysql57-community
+#         enablerepo: mysql157-community
+#         state: present
+       when: output1.rc == 0 or output1.rc == 1
+       become: yes
+       register: output2
+       ignore_errors: yes
+
+     - name: Start SQL Service
+       command: systemctl start mysqld.service
+       when: output2.rc == 0 or output2.rc == 1
+       become: yes
+...

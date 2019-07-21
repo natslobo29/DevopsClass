@@ -1,0 +1,23 @@
+---
+- hosts: web #group name from the inventory
+  gather_facts: false #hides lines
+
+  vars:
+    pack_name: telnet
+
+  tasks:
+    - name: Install {{ pack_name }}
+      yum: pkg={{ pack_name }} state=installed
+      become: yes
+      register: output
+
+    - debug: var=output
+
+    - name: print successful message
+      debug: msg="Installation is successful"
+      when: output is success  
+
+    - name: print failure message
+      debug: msg="Installation is failed"
+      when: output is failed  
+...

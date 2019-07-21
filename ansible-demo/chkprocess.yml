@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Check if process running
+      action: chkprocess process=httpd
+      register: process
+      become: yes
+
+    - debug: msg="{{ process.msg }}"
+...

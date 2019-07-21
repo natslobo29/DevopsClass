@@ -1,0 +1,51 @@
+---
+- name: Create a new Demo EC2 instance
+  hosts: localhost
+  gather_facts: False
+
+  vars:
+      region: ap-south-1 #fetched from the url
+      instance_type: t2.micro
+      ami: ami-5b673c34  # Redhat (details fetched from controller machine of running EC2 instance)
+      keypair: mc1 # pem file name (details fetched from controller machine of running EC2 instance)
+
+  tasks:
+
+    - name: Create an ec2 instance
+      ec2:
+         key_name: "{{ keypair }}"
+         aws_access_key: "AKIAINVIAU5S7SXWLYBA"
+         aws_secret_key: "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"
+         group: launch-wizard-10  # security group name
+         instance_type: "{{ instance_type}}"
+         image: "{{ ami }}"
+         wait: true
+         region: "{{ region }}"
+         count: 1  # default
+         count_tag:
+            Name: "Demo"
+         instance_tags:
+            Name: "Demo"
+         vpc_subnet_id: "subnet-dbf0afb3"
+         assign_public_ip: yes
+      register: ec2
+#boto required    
+    - name: printing output of ec2
+      debug: var=ec2
+   
+    - name: printing private ip addr of EC2
+      debug: msg="{{ ec2.instances.0.private_ip }}"
+
+    - name: Execute SSH-keygen
+      command: ssh-keygen -y -t rsa -f /root/.ssh/id_rsa -N ''
+      args:
+        creates: /root/.ssh/id_rsa
+      delegate_to: localhost
+
+    - name: Set Authorized key token from file
+      become: true
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+...
