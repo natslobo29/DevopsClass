@@ -2,5 +2,5 @@
 # defaults file for tomcat_aws
 region: ap-south-1
 instance_type: t2.micro
-ami: ami-009110a2bf8d7dd0a # Redhat
+ami: ami-0a74bfeb190bd404f # Redhat
 keypair: sshController # pem file name
