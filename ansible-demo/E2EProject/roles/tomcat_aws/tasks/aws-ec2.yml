@@ -13,7 +13,7 @@
       Name: "Demo"
     instance_tags:
       Name: "Demo"
-    vpc_subnet_id: "subnet-dbf0afb3"
+    vpc_subnet_id: "subnet-e448c4a8"
     assign_public_ip: yes
   register: ec2
 
